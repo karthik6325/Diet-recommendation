@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 # Step 1: Read the dataset in chunks
 chunk_size = 100
-chunks = pd.read_csv('c:/Users/karth/Downloads/Diet-Recommendation-System-main/split_file_1.csv', chunksize=chunk_size)
+chunks = pd.read_csv('./split_file_1.csv', chunksize=chunk_size)
 
 # Step 2: Load a spaCy model
 nlp = spacy.load('en_core_web_lg')
@@ -96,9 +96,10 @@ def recommend_recipes_for_disease(disease):
     result_df_sorted = result_df.sort_values(by='Similarity', ascending=False)
 
     # Step 10: Display top matches
-    top_n = 10
+    top_n = 100
     top_matches = result_df_sorted.head(top_n)
     print(tabulate(top_matches[['RecipeId', 'Name', 'Similarity', 'RecipeIngredientParts']], headers='keys', tablefmt='pretty'))
+    return top_matches
 
 if __name__ == '__main__':
     # Example usage for heart disease

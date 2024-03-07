@@ -14,7 +14,7 @@ def categorize_calories(calories):
 
 def train_knn_model(df):
     df['CalorieCategory'] = df['Calories'].apply(categorize_calories)
-    X = df[['Calories', 'ProteinContent', 'CarbohydrateContent', 'FatContent']]  # Add 'ProteinContent', 'CarbohydrateContent', and 'FatContent' as additional features
+    X = df[['Calories', 'ProteinContent', 'CarbohydrateContent', 'FatContent']]
     y = df['CalorieCategory']
 
     label_encoder = LabelEncoder()
@@ -47,28 +47,20 @@ def predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, 
     # Filter the dataframe based on the predicted calorie category
     filtered_df = df[df['CalorieCategory'] == predicted_calorie_category]
 
-    # Print RecipeId, food name, and food ingredients for the matching foods
-    print("\nMatching Recipes:")
-    for index, row in filtered_df.iterrows():
-        print(f"RecipeId: {row['RecipeId']}")
-        print(f"Food Name: {row['Name']}")
-        print(f"Food Ingredients: {row['RecipeIngredientParts']}\n")
-        print(f"Calories: {row['Calories']}")
-        print(f"ProteinContent: {row['ProteinContent']}")
-        print(f"CarbohydrateContent: {row['CarbohydrateContent']}")
-        print(f"FatContent: {row['FatContent']}\n")
-        print(f"CalorieCategory: {row['CalorieCategory']}\n")
+    return filtered_df
 
-# Load your dataset
-df = pd.read_csv('c:/Users/karth/Downloads/Diet-Recommendation-System-main/split_file_1.csv')
+def recipe_prediction_function(dataset_path, approx_calories, approx_protein, approx_carbohydrate, approx_fat):
+    # Load the dataset
+    df = pd.read_csv(dataset_path)
 
-# Train the KNN model and obtain the label encoder
-knn_model, label_encoder, scaler = train_knn_model(df)
+    # Train the KNN model and obtain the label encoder
+    knn_model, label_encoder, scaler = train_knn_model(df)
 
-# Example: Predict calorie category based on approximate calories, protein, carbohydrate, and fat
-approx_calories_value = 500
-approx_protein_value = 20
-approx_carbohydrate_value = 30
-approx_fat_value = 15
+    # Predict matching recipes based on input values
+    result_df = predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, approx_protein, approx_carbohydrate, approx_fat, df)
 
-predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories_value, approx_protein_value, approx_carbohydrate_value, approx_fat_value, df)
+    return result_df
+
+
+result = recipe_prediction_function(dataset_path='./split_file_1.csv', approx_calories=500, approx_protein=20, approx_carbohydrate=30, approx_fat=15)
+print(result)

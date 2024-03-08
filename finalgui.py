@@ -2,7 +2,9 @@
 from tabulate import tabulate
 import pandas as pd
 from clustering import kmeans_clustering
-from knn_weight_loss import train_knn_model, predict_matching_recipes
+from knn_weight_loss import train_knn_model_weightloss, predict_matching_recipes_weightloss
+from knn_weight_gain import train_knn_model_weightgain, predict_matching_recipes_weightgain
+from knn_healthy import train_knn_model_healthy, predict_matching_recipes_healthy
 from disease_recommendation import recommend_recipes_for_disease
 
 
@@ -36,7 +38,7 @@ def match_recipe_ids(disease_df, matching_df, original_df):
 
     return matched_df
 
-def Weight_Loss(age, weight, height, food_timing, disease, diet_type):
+def Weight_Loss(age, weight, height, food_timing, disease):
     # Load the original dataset
     df = pd.read_csv('./split_file_1.csv')
 
@@ -48,14 +50,14 @@ def Weight_Loss(age, weight, height, food_timing, disease, diet_type):
     clustering_df = kmeans_clustering(df,3,food_timing)
 
     # Step 3: KNN
-    knn_model, label_encoder, scaler = train_knn_model(clustering_df)
+    knn_model, label_encoder, scaler = train_knn_model_weightloss(clustering_df)
 
     # Step 4: Predict Matching Recipes
     approx_calories = 500
     approx_protein = 20
     approx_carbohydrate = 30
     approx_fat = 15
-    matching_recipes_df = predict_matching_recipes(knn_model, label_encoder, scaler,
+    matching_recipes_df = predict_matching_recipes_weightloss(knn_model, label_encoder, scaler,
                                                    approx_calories, approx_protein, approx_carbohydrate, approx_fat, clustering_df)
 
     # Step 5: Match Recipe IDs
@@ -64,12 +66,58 @@ def Weight_Loss(age, weight, height, food_timing, disease, diet_type):
     print(matched_df)
             
 
-def Weight_Gain(age, weight, height, food_timing, disease, diet_type):
-    print(age) 
+def Weight_Gain(age, weight, height, food_timing, disease):
+    # Load the original dataset
+    df = pd.read_csv('./split_file_1.csv')
+
+    # Step 1: Disease Recommendation
+    disease_recommendation_df = recommend_recipes_for_disease(df, disease)
+
+
+    # Step 2: Clustering
+    clustering_df = kmeans_clustering(df,3,food_timing)
+
+    # Step 3: KNN
+    knn_model, label_encoder, scaler = train_knn_model_weightgain(clustering_df)
+
+    # Step 4: Predict Matching Recipes
+    approx_calories = 500
+    approx_protein = 20
+    matching_recipes_df = predict_matching_recipes_weightgain(knn_model, label_encoder, scaler,
+                                                   approx_calories, approx_protein, clustering_df)
+
+    # Step 5: Match Recipe IDs
+    matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
+
+    print(matched_df)
                  
 
-def Healthy(age, weight, height, food_timing, disease, diet_type):
-    print(age) 
+def Healthy(age, weight, height, food_timing, disease):
+    # Load the original dataset
+    df = pd.read_csv('./split_file_1.csv')
+
+    # Step 1: Disease Recommendation
+    disease_recommendation_df = recommend_recipes_for_disease(df, disease)
+
+
+    # Step 2: Clustering
+    clustering_df = kmeans_clustering(df,3,food_timing)
+
+    # Step 3: KNN
+    knn_model, label_encoder, scaler = train_knn_model_healthy(clustering_df)
+
+    # Step 4: Predict Matching Recipes
+    approx_calories = 500
+    approx_protein = 20
+    approx_carbohydrate = 30
+    approx_fat = 15
+    matching_recipes_df = predict_matching_recipes_healthy(knn_model, label_encoder, scaler,
+                                                   approx_calories, approx_protein, approx_carbohydrate, approx_fat, clustering_df)
+
+    # Step 5: Match Recipe IDs
+    matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
+
+    print(matched_df)
 
 
 

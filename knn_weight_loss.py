@@ -12,7 +12,7 @@ def categorize_calories(calories):
     else:
         return 'Low Calorie'
 
-def train_knn_model(df):
+def train_knn_model_weightloss(df):
     df['CalorieCategory'] = df['Calories'].apply(categorize_calories)
     X = df[['Calories', 'ProteinContent', 'CarbohydrateContent', 'FatContent']]
     y = df['CalorieCategory']
@@ -37,7 +37,7 @@ def train_knn_model(df):
 
     return knn_model, label_encoder, scaler
 
-def predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, approx_protein, approx_carbohydrate, approx_fat, df):
+def predict_matching_recipes_weightloss(knn_model, label_encoder, scaler, approx_calories, approx_protein, approx_carbohydrate, approx_fat, df):
     approx_features = [[approx_calories, approx_protein, approx_carbohydrate, approx_fat]]
     approx_features_scaled = scaler.transform(approx_features)
 
@@ -51,10 +51,10 @@ def predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, 
 
 def recipe_prediction_function(df, approx_calories, approx_protein, approx_carbohydrate, approx_fat):
     # Train the KNN model and obtain the label encoder
-    knn_model, label_encoder, scaler = train_knn_model(df)
+    knn_model, label_encoder, scaler = train_knn_model_weightloss(df)
 
     # Predict matching recipes based on input values
-    result_df = predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, approx_protein,
+    result_df = predict_matching_recipes_weightloss(knn_model, label_encoder, scaler, approx_calories, approx_protein,
                                          approx_carbohydrate, approx_fat, df)
 
     return result_df

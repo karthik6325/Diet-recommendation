@@ -12,7 +12,7 @@ def categorize_calories(calories):
     else:
         return 'Low Calorie'
 
-def train_knn_model(df):
+def train_knn_model_weightgain(df):
     df['CalorieCategory'] = df['Calories'].apply(categorize_calories)
     X = df[['Calories', 'ProteinContent']]  # Add 'ProteinContent' as an additional feature
     y = df['CalorieCategory']
@@ -37,7 +37,7 @@ def train_knn_model(df):
 
     return knn_model, label_encoder, scaler
 
-def predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, approx_protein, df):
+def predict_matching_recipes_weightgain(knn_model, label_encoder, scaler, approx_calories, approx_protein, df):
     approx_features = [[approx_calories, approx_protein]]
     approx_features_scaled = scaler.transform(approx_features)
 
@@ -51,24 +51,25 @@ def predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, 
 
 def recipe_prediction_function(input_df, approx_calories, approx_protein):
     # Train the KNN model and obtain the label encoder
-    knn_model, label_encoder, scaler = train_knn_model(input_df)
+    knn_model, label_encoder, scaler = train_knn_model_weightgain(input_df)
 
     # Predict matching recipes based on input values
-    result_df = predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, approx_protein, input_df)
+    result_df = predict_matching_recipes_weightgain(knn_model, label_encoder, scaler, approx_calories, approx_protein, input_df)
 
     return result_df
 
-# Example usage:
-# Replace 'your_dataset.csv' with the actual path to your CSV file
-# Load your DataFrame
-df = pd.read_csv('./split_file_1.csv')
+if __name__ == '__main__':
+    # Example usage:
+    # Replace 'your_dataset.csv' with the actual path to your CSV file
+    # Load your DataFrame
+    df = pd.read_csv('./split_file_1.csv')
 
-# Set input values for prediction
-approx_calories_value = 500
-approx_protein_value = 20
+    # Set input values for prediction
+    approx_calories_value = 500
+    approx_protein_value = 20
 
-# Call the function
-result = recipe_prediction_function(input_df=df, approx_calories=approx_calories_value, approx_protein=approx_protein_value)
+    # Call the function
+    result = recipe_prediction_function(input_df=df, approx_calories=approx_calories_value, approx_protein=approx_protein_value)
 
-# Print the result
-print(result)
+    # Print the result
+    print(result)

@@ -49,18 +49,22 @@ def predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, 
 
     return filtered_df
 
-def recipe_prediction_function(dataset_path, approx_calories, approx_protein, approx_carbohydrate, approx_fat):
-    # Load the dataset
-    df = pd.read_csv(dataset_path)
-
+def recipe_prediction_function(df, approx_calories, approx_protein, approx_carbohydrate, approx_fat):
     # Train the KNN model and obtain the label encoder
     knn_model, label_encoder, scaler = train_knn_model(df)
 
     # Predict matching recipes based on input values
-    result_df = predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, approx_protein, approx_carbohydrate, approx_fat, df)
+    result_df = predict_matching_recipes(knn_model, label_encoder, scaler, approx_calories, approx_protein,
+                                         approx_carbohydrate, approx_fat, df)
 
     return result_df
 
-
-result = recipe_prediction_function(dataset_path='./split_file_1.csv', approx_calories=500, approx_protein=20, approx_carbohydrate=30, approx_fat=15)
-print(result)
+if __name__ == '__main__':
+    # Example usage with a given DataFrame df
+    df = pd.read_csv('./split_file_1.csv')
+    approx_calories = 500
+    approx_protein = 20
+    approx_carbohydrate = 30
+    approx_fat = 15
+    result_df = recipe_prediction_function(df, approx_calories, approx_protein, approx_carbohydrate, approx_fat)
+    print(result_df)

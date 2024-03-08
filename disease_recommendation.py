@@ -5,14 +5,7 @@ from tqdm import tqdm
 import concurrent.futures
 from tabulate import tabulate
 
-# Step 1: Read the dataset in chunks
-chunk_size = 100
-chunks = pd.read_csv('./split_file_1.csv', chunksize=chunk_size)
 
-# Step 2: Load a spaCy model
-nlp = spacy.load('en_core_web_lg')
-
-# Step 3: Define disease-related ingredients and ingredients to avoid
 disease_ingredients_mapping = {
     'heart_disease': ['Salmon', 'Oats', 'Berries', 'Nuts', 'Olive oil', 'Leafy green vegetables'],
     'hypertension': ['Bananas', 'Berries', 'Oats', 'Leafy green vegetables', 'Beets', 'Low-fat dairy products'],
@@ -47,14 +40,25 @@ ingredients_to_avoid_mapping = {
     'malnutrition': ['Processed and refined foods', 'Sugary beverages', 'Highly processed snacks', 'Excessive caffeine', 'Alcohol'],
 }
 
-# Step 4: Create an empty DataFrame to store results
-result_df = pd.DataFrame(columns=['RecipeId', 'Name', 'Similarity', 'RecipeIngredientParts'])
+nlp = spacy.load('en_core_web_lg')
 
-# Step 5: Define a function for calculating similarity and filtering out ingredients to avoid
 def calculate_similarity_and_filter(row, disease):
     recipe_id = row['RecipeId']
     name = row['Name']
+    cook_time = row['CookTime']
+    prep_time = row['PrepTime']
+    total_time = row['TotalTime']
     recipe_ingredient_parts = row['RecipeIngredientParts']
+    calories = row['Calories']
+    fat_content = row['FatContent']
+    saturated_fat_content = row['SaturatedFatContent']
+    cholesterol_content = row['CholesterolContent']
+    sodium_content = row['SodiumContent']
+    carbohydrate_content = row['CarbohydrateContent']
+    fiber_content = row['FiberContent']
+    sugar_content = row['SugarContent']
+    protein_content = row['ProteinContent']
+    recipe_instructions = row['RecipeInstructions']
 
     # Use recommended ingredients for the given disease
     disease_ingredients = disease_ingredients_mapping.get(disease, [])
@@ -65,42 +69,64 @@ def calculate_similarity_and_filter(row, disease):
     disease_ingredient_embeddings = nlp(' '.join(disease_ingredients)).vector
 
     # Calculate the Euclidean norm using numpy.linalg.norm
-    similarity = np.dot(recipe_embeddings, disease_ingredient_embeddings) / (np.linalg.norm(recipe_embeddings) * np.linalg.norm(disease_ingredient_embeddings))
-    
+    similarity = np.dot(recipe_embeddings, disease_ingredient_embeddings) / (
+            np.linalg.norm(recipe_embeddings) * np.linalg.norm(disease_ingredient_embeddings))
+
     # Remove recipes with ingredients to avoid
     for avoid_ingredient in avoid_ingredients:
         if avoid_ingredient.lower() in recipe_ingredient_parts.lower():
             similarity = 0  # Set similarity to zero if ingredients to avoid are found
             break
-    
-    return recipe_id, name, similarity, recipe_ingredient_parts
 
-# Define a wrapper function for the multiprocessing environment
+    # Include only specific columns in the result
+    result = {
+        'RecipeId': recipe_id,
+        'Name': name,
+        'CookTime': cook_time,
+        'PrepTime': prep_time,
+        'TotalTime': total_time,
+        'RecipeIngredientParts': recipe_ingredient_parts,
+        'Calories': calories,
+        'FatContent': fat_content,
+        'SaturatedFatContent': saturated_fat_content,
+        'CholesterolContent': cholesterol_content,
+        'SodiumContent': sodium_content,
+        'CarbohydrateContent': carbohydrate_content,
+        'FiberContent': fiber_content,
+        'SugarContent': sugar_content,
+        'ProteinContent': protein_content,
+        'RecipeInstructions': recipe_instructions,
+        'Disease': disease,
+        'RecommendedIngredients': disease_ingredients,
+        'AvoidIngredients': avoid_ingredients,
+        'Similarity': similarity  # Include the 'Similarity' column
+    }
+
+    return result
+
 def process_chunk_wrapper(chunk, disease):
     return [calculate_similarity_and_filter(row, disease) for _, row in chunk.iterrows()]
 
-def recommend_recipes_for_disease(disease):
-    # Convert chunks to a list to avoid exhaustion
-    chunk_list = list(chunks)
-    
+def recommend_recipes_for_disease(df, disease):
+    # Convert DataFrame to chunks
+    chunk_size = 20
+    chunks = [df[i:i + chunk_size] for i in range(0, df.shape[0], chunk_size)]
+
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = list(tqdm(executor.map(process_chunk_wrapper, chunk_list, [disease]*len(chunk_list)), total=len(chunk_list)))
+        results = list(
+            tqdm(executor.map(process_chunk_wrapper, chunks, [disease] * len(chunks)), total=len(chunks)))
 
-    # Step 7: Flatten the list of tuples
-    flattened_results = [item for sublist in results for item in sublist]
+    # Combine the results from all chunks into a single DataFrame
+    result_df = pd.concat([pd.DataFrame(chunk_result) for chunk_result in results])
 
-    # Step 8: Add results to the DataFrame
-    result_df = pd.DataFrame(flattened_results, columns=['RecipeId', 'Name', 'Similarity', 'RecipeIngredientParts'])
-
-    # Step 9: Rank and sort the DataFrame
+    # Rank and sort the DataFrame
     result_df_sorted = result_df.sort_values(by='Similarity', ascending=False)
 
-    # Step 10: Display top matches
-    top_n = 100
-    top_matches = result_df_sorted.head(top_n)
-    print(tabulate(top_matches[['RecipeId', 'Name', 'Similarity', 'RecipeIngredientParts']], headers='keys', tablefmt='pretty'))
-    return top_matches
+    # Return only the top 100 results
+    return result_df_sorted.head(100)
 
 if __name__ == '__main__':
-    # Example usage for heart disease
-    recommend_recipes_for_disease('hypertension')
+    # Example usage for hypertension
+    df = pd.read_csv('./split_file_1.csv')
+    result_df = recommend_recipes_for_disease(df, 'hypertension')
+    print(result_df)

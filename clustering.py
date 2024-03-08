@@ -1,8 +1,7 @@
 import pandas as pd
 from sklearn.cluster import KMeans
 
-def kmeans_clustering(df, optimal_k=3):
-    print(df.columns)
+def kmeans_clustering(df, optimal_k=3, food_timing=None):
     features_kmeans = df[
         ['Calories', 'FatContent', 'SodiumContent', 'CarbohydrateContent', 'FiberContent', 'SugarContent','ProteinContent']]
 
@@ -17,4 +16,20 @@ def kmeans_clustering(df, optimal_k=3):
     kmeans = KMeans(n_clusters=optimal_k, random_state=42, n_init=10)  # Explicitly set n_init
     df['Cluster'] = kmeans.fit_predict(features_kmeans)
 
-    return df
+    # Filter the DataFrame based on the assigned food timing cluster
+    if food_timing is not None:
+        matching_df = df[df['Cluster'] == food_timing]
+    else:
+        matching_df = df
+
+    return matching_df
+
+if __name__ == '__main__':
+    # Load the original dataset
+    df = pd.read_csv('./split_file_1.csv')
+
+    # Step 1: Clustering
+    food_timing_cluster = 2  # You can set this to 0, 1, or 2
+    clustering_df = kmeans_clustering(df, optimal_k=3, food_timing=food_timing_cluster)
+
+    print(clustering_df)

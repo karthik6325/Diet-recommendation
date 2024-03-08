@@ -40,9 +40,10 @@ if __name__ == '__main__':
     # Step 1: Disease Recommendation
     disease = 'hypertension'
     disease_recommendation_df = recommend_recipes_for_disease(df, disease)
+    food_timing=2
 
     # Step 2: Clustering
-    clustering_df = kmeans_clustering(df)
+    clustering_df = kmeans_clustering(df,3,food_timing)
 
     # Step 3: KNN
     knn_model, label_encoder, scaler = train_knn_model(clustering_df)

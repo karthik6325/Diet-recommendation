@@ -9,7 +9,7 @@ from disease_recommendation import recommend_recipes_for_disease
 
 def calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num_days, activity_factor):
     # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    bmr = 10*weight+6.25*height-5*age+5
 
     tdee = bmr * activity_factor
     
@@ -21,18 +21,18 @@ def calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num
 
 def calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num_days, activity_factor):
     # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    bmr =10*weight+6.25*height-5*age+5
     
-    tdee = bmr * activity_factor
+    tdee =bmr*activity_factor
     
     # Calculate total calories needed for weight loss
-    total_calories = tdee - (desired_loss_kg * 7700) / num_days
-    
+    total_calories =tdee-(desired_loss_kg * 7700)/num_days
+    total_calories=abs(total_calories)
     return total_calories//3
 
 def calculate_calories_for_healthy(weight, age, height):
     # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    bmr = 10 * weight + 6.25 * height - 5 *age+5
     
     tdee = bmr * activity_factor    
     return total_calories//3
@@ -95,7 +95,7 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
     knn_model, label_encoder, scaler = train_knn_model_weightloss(clustering_df)
      
     # Step 4: Predict Matching Recipes
-    cal_intake=calculate_calories_for_weight_loss(weight, age, height, desired_gain_kg, num_days, activity_level)
+    cal_intake=calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num_days, activity_factor)
     cal_protein=(cal_intake)//4
     cal_carb=(cal_intake)//4
     cal_fat=(cal_intake)//9
@@ -153,28 +153,25 @@ def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,a
                  
 
 def Healthy(age,weight,height,food_timing,disease):
-    # Load the original dataset
     df = pd.read_csv('./split_file_1.csv')
 
-    # Step 1: Disease Recommendation
+    # Step 1:Disease Recommendation
     disease_recommendation_df=recommend_recipes_for_disease(df, disease)
 
-
-    # Step 2: Clustering
+    # Step 2:Clustering
     clustering_df=kmeans_clustering(df,3,food_timing)
 
-    # Step 3: KNN
-    knn_model, label_encoder,scaler = train_knn_model_healthy(clustering_df)
+    # Step 3:KNN
+    knn_model,label_encoder,scaler = train_knn_model_healthy(clustering_df)
 
-    # Step 4: Predict Matching Recipes
+    # Step 4:Predict Matching Recipes
     approx_calories = calculate_calories_for_healthy(weight, age, height)
     
     matching_recipes_df = predict_matching_recipes_healthy(knn_model, label_encoder, scaler,
                                                    approx_calories, clustering_df)
 
-    # Step 5: Match Recipe IDs
-    matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
-
+    # Step 5:Match Recipe IDs
+    matched_df=match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
     print(matched_df)
 
 

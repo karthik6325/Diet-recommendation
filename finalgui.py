@@ -51,11 +51,22 @@ def calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num
             
     return total_calories//3
 
-def calculate_calories_for_healthy(weight, age, height):
+def calculate_calories_for_healthy(weight, age, height, activity_level):
     # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
     bmr = 10 * weight + 6.25 * height - 5 *age+5
+
+    if activity_level == 1:
+        activity_factor = 1.2
+    elif activity_level == 2:
+        activity_factor = 1.375
+    elif activity_level == 3:
+        activity_factor = 1.55
+    elif activity_level == 4:
+        activity_factor = 1.725
+    elif activity_level == 5:
+        activity_factor = 1.9
     
-    tdee = bmr * activity_factor    
+    total_calories = bmr * activity_factor    
     return total_calories//3
 
 
@@ -173,7 +184,7 @@ def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,a
     print(matched_df)
                  
 
-def Healthy(age,weight,height,food_timing,disease):
+def Healthy(age,weight,height,food_timing,disease,activity_level):
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1:Disease Recommendation
@@ -186,7 +197,7 @@ def Healthy(age,weight,height,food_timing,disease):
     knn_model,label_encoder,scaler = train_knn_model_healthy(clustering_df)
 
     # Step 4:Predict Matching Recipes
-    approx_calories = calculate_calories_for_healthy(weight, age, height)
+    approx_calories = calculate_calories_for_healthy(weight, age, height,activity_level)
     
     matching_recipes_df = predict_matching_recipes_healthy(knn_model, label_encoder, scaler,
                                                    approx_calories, clustering_df)

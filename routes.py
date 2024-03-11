@@ -94,9 +94,10 @@ def healthy_endpoint():
     height = float(data['Height'])
     food_timing = int(data['Food_Timing'])
     disease = data['Disease']
+    activity_level = int(data['Activity_Level'])
 
     # Call the Healthy function with the extracted data
-    suggested_food_items_df = Healthy(age, weight, height, food_timing, disease)
+    suggested_food_items_df = Healthy(age, weight, height, food_timing, disease,activity_level)
     
     # Convert DataFrame to dictionary
     suggested_food_items_dict = suggested_food_items_df.to_dict(orient='records')

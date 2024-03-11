@@ -2,6 +2,43 @@
 from flask import request, jsonify
 from finalgui import Weight_Loss, Weight_Gain, Healthy
 
+import requests
+from PIL import Image
+from io import BytesIO
+
+import requests
+
+def fetch_image_url(query, api_key, cx):
+    search_url = "https://www.googleapis.com/customsearch/v1"
+    params = {
+        'q': query,
+        'key': api_key,
+        'cx': cx,
+        'searchType': 'image',
+    }
+
+    response = requests.get(search_url, params=params)
+    data = response.json()
+
+    if 'items' in data and data['items']:
+        return data['items'][0]['link']
+    else:
+        # print(f"No image found for query: {query}")
+        return "https://i0.wp.com/wonkywonderful.com/wp-content/uploads/2020/08/spinach-tomato-pasta-sauce-recipe-4.jpg?ssl=1"
+
+
+# Replace 'YOUR_GOOGLE_API_KEY' and 'YOUR_CX' with your actual Google API key and Custom Search Engine ID
+YOUR_GOOGLE_API_KEY = ''
+CX = ''
+
+
+def process_food_items(food_items):
+    # Iterate through the food items and add image links using Google Custom Search
+    for item in food_items:
+        item['image_url'] = fetch_image_url(item['Name'], YOUR_GOOGLE_API_KEY, CX)
+
+    return food_items
+
 def weight_loss_endpoint():
     data = request.json
 
@@ -21,8 +58,9 @@ def weight_loss_endpoint():
     # Convert DataFrame to dictionary
     suggested_food_items_dict = suggested_food_items_df.to_dict(orient='records')
 
-    # Return the suggested food items as JSON response
-    return jsonify({'suggested_food_items': suggested_food_items_dict})
+    processed_food_items = process_food_items(suggested_food_items_dict)
+
+    return jsonify({'suggested_food_items': processed_food_items})
 
 def weight_gain_endpoint():
     data = request.json
@@ -43,8 +81,9 @@ def weight_gain_endpoint():
     # Convert DataFrame to dictionary
     suggested_food_items_dict = suggested_food_items_df.to_dict(orient='records')
 
-    # Return the suggested food items as JSON response
-    return jsonify({'suggested_food_items': suggested_food_items_dict})
+    processed_food_items = process_food_items(suggested_food_items_dict)
+
+    return jsonify({'suggested_food_items': processed_food_items})
 
 def healthy_endpoint():
     data = request.json
@@ -62,5 +101,6 @@ def healthy_endpoint():
     # Convert DataFrame to dictionary
     suggested_food_items_dict = suggested_food_items_df.to_dict(orient='records')
 
-    # Return the suggested food items as JSON response
-    return jsonify({'suggested_food_items': suggested_food_items_dict})
+    processed_food_items = process_food_items(suggested_food_items_dict)
+
+    return jsonify({'suggested_food_items': processed_food_items})

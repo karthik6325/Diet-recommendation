@@ -130,7 +130,7 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
-    print(matched_df)
+    return matched_df
             
 
 def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,activity_level):
@@ -170,7 +170,7 @@ def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,a
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
-    print(matched_df)
+    return matched_df
                  
 
 def Healthy(age,weight,height,food_timing,disease):
@@ -185,15 +185,14 @@ def Healthy(age,weight,height,food_timing,disease):
     # Step 3:KNN
     knn_model,label_encoder,scaler = train_knn_model_healthy(clustering_df)
 
-    # Step 4:Predict Matching Recipes
+    # Step 4: Predict Matching Recipes
     approx_calories = calculate_calories_for_healthy(weight, age, height)
-    
     matching_recipes_df = predict_matching_recipes_healthy(knn_model, label_encoder, scaler,
                                                    approx_calories, clustering_df)
 
     # Step 5:Match Recipe IDs
     matched_df=match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
-    print(matched_df)
+    return matched_df
 
 
 

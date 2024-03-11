@@ -108,11 +108,8 @@ def Healthy(age, weight, height, food_timing, disease):
 
     # Step 4: Predict Matching Recipes
     approx_calories = 500
-    approx_protein = 20
-    approx_carbohydrate = 30
-    approx_fat = 15
     matching_recipes_df = predict_matching_recipes_healthy(knn_model, label_encoder, scaler,
-                                                   approx_calories, approx_protein, approx_carbohydrate, approx_fat, clustering_df)
+                                                   approx_calories, clustering_df)
 
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)

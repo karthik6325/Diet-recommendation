@@ -7,6 +7,36 @@ from knn_weight_gain import train_knn_model_weightgain, predict_matching_recipes
 from knn_healthy import train_knn_model_healthy, predict_matching_recipes_healthy
 from disease_recommendation import recommend_recipes_for_disease
 
+def calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num_days, activity_factor):
+    # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5
+
+    tdee = bmr * activity_factor
+    
+    # Calculate total calories needed for weight gain
+    total_calories = tdee + (desired_gain_kg * 7700) / num_days
+    
+    return total_calories//3
+
+
+def calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num_days, activity_factor):
+    # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    
+    tdee = bmr * activity_factor
+    
+    # Calculate total calories needed for weight loss
+    total_calories = tdee - (desired_loss_kg * 7700) / num_days
+    
+    return total_calories//3
+
+def calculate_calories_for_healthy(weight, age, height):
+    # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    
+    tdee = bmr * activity_factor    
+    return total_calories//3
+
 
 def match_recipe_ids(disease_df, matching_df, original_df):
     # Create a mapping of RecipeId to its index in the original DataFrame
@@ -38,25 +68,41 @@ def match_recipe_ids(disease_df, matching_df, original_df):
 
     return matched_df
 
-def Weight_Loss(age, weight, height, food_timing, disease):
+def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,activity_level):
     # Load the original dataset
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1: Disease Recommendation
     disease_recommendation_df = recommend_recipes_for_disease(df, disease)
-
+      # Calculate Total Daily Energy Expenditure (TDEE) based on activity level
+    if activity_level == 1:
+        activity_factor = 1.2
+    elif activity_level == 2:
+        activity_factor = 1.375
+    elif activity_level == 3:
+        activity_factor = 1.55
+    elif activity_level == 4:
+        activity_factor = 1.725
+    elif activity_level == 5:
+        activity_factor = 1.9
+    else:
+     raise ValueError("Invalid activity level. Choose from:1-> sedentary, 2->lightly active,3-> moderately active,4-> very active,5-> extremely active")
 
     # Step 2: Clustering
     clustering_df = kmeans_clustering(df,3,food_timing)
 
     # Step 3: KNN
     knn_model, label_encoder, scaler = train_knn_model_weightloss(clustering_df)
-
+     
     # Step 4: Predict Matching Recipes
-    approx_calories = 500
-    approx_protein = 20
-    approx_carbohydrate = 30
-    approx_fat = 15
+    cal_intake=calculate_calories_for_weight_loss(weight, age, height, desired_gain_kg, num_days, activity_level)
+    cal_protein=(cal_intake)//4
+    cal_carb=(cal_intake)//4
+    cal_fat=(cal_intake)//9
+    approx_calories = cal_intake-cal_carb-cal_protein-cal_fat
+    approx_protein = cal_protein
+    approx_carbohydrate = cal_carb
+    approx_fat = cal_fat
     matching_recipes_df = predict_matching_recipes_weightloss(knn_model, label_encoder, scaler,
                                                    approx_calories, approx_protein, approx_carbohydrate, approx_fat, clustering_df)
 
@@ -66,23 +112,37 @@ def Weight_Loss(age, weight, height, food_timing, disease):
     print(matched_df)
             
 
-def Weight_Gain(age, weight, height, food_timing, disease):
+def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,activity_level):
     # Load the original dataset
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1: Disease Recommendation
     disease_recommendation_df = recommend_recipes_for_disease(df, disease)
-
+     # Calculate Total Daily Energy Expenditure (TDEE) based on activity level
+    if activity_level == 1:
+        activity_factor = 1.2
+    elif activity_level == 2:
+        activity_factor = 1.375
+    elif activity_level == 3:
+        activity_factor = 1.55
+    elif activity_level == 4:
+        activity_factor = 1.725
+    elif activity_level == 5:
+        activity_factor = 1.9
+    else:
+     raise ValueError("Invalid activity level. Choose from:1-> sedentary, 2->lightly active,3-> moderately active,4-> very active,5-> extremely active")
 
     # Step 2: Clustering
     clustering_df = kmeans_clustering(df,3,food_timing)
 
     # Step 3: KNN
     knn_model, label_encoder, scaler = train_knn_model_weightgain(clustering_df)
-
+    cal_intake=calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num_days, activity_factor)
+    #convert calorie to protein
+    cal_protein=(cal_intake)//4
     # Step 4: Predict Matching Recipes
-    approx_calories = 500
-    approx_protein = 20
+    approx_calories = cal_intake-cal_protein
+    approx_protein = cal_protein
     matching_recipes_df = predict_matching_recipes_weightgain(knn_model, label_encoder, scaler,
                                                    approx_calories, approx_protein, clustering_df)
 
@@ -92,27 +152,25 @@ def Weight_Gain(age, weight, height, food_timing, disease):
     print(matched_df)
                  
 
-def Healthy(age, weight, height, food_timing, disease):
+def Healthy(age,weight,height,food_timing,disease):
     # Load the original dataset
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1: Disease Recommendation
-    disease_recommendation_df = recommend_recipes_for_disease(df, disease)
+    disease_recommendation_df=recommend_recipes_for_disease(df, disease)
 
 
     # Step 2: Clustering
-    clustering_df = kmeans_clustering(df,3,food_timing)
+    clustering_df=kmeans_clustering(df,3,food_timing)
 
     # Step 3: KNN
-    knn_model, label_encoder, scaler = train_knn_model_healthy(clustering_df)
+    knn_model, label_encoder,scaler = train_knn_model_healthy(clustering_df)
 
     # Step 4: Predict Matching Recipes
-    approx_calories = 500
-    approx_protein = 20
-    approx_carbohydrate = 30
-    approx_fat = 15
+    approx_calories = calculate_calories_for_healthy(weight, age, height)
+    
     matching_recipes_df = predict_matching_recipes_healthy(knn_model, label_encoder, scaler,
-                                                   approx_calories, approx_protein, approx_carbohydrate, approx_fat, clustering_df)
+                                                   approx_calories, clustering_df)
 
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)

@@ -3,6 +3,7 @@ from clustering import kmeans_clustering
 from knn_weight_loss import train_knn_model, predict_matching_recipes
 from disease_recommendation import recommend_recipes_for_disease
 
+
 def match_recipe_ids(disease_df, matching_df, original_df):
     # Create a mapping of RecipeId to its index in the original DataFrame
     recipe_id_mapping = {recipe_id: idx for idx, recipe_id in enumerate(original_df['RecipeId'])}

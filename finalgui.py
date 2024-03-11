@@ -27,7 +27,28 @@ def calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num
     
     # Calculate total calories needed for weight loss
     total_calories =tdee-(desired_loss_kg * 7700)/num_days
-    total_calories=abs(total_calories)
+    if total_calories < 0:
+        if total_calories < -900:
+            total_calories = 50 + (total_calories + 900) * (50 / 100)  
+        elif total_calories < -800:
+            total_calories = 100 + (total_calories + 800) * (50 / 100)  
+        elif total_calories < -700:
+            total_calories = 150 + (total_calories + 700) * (50 / 100)
+        elif total_calories < -600:
+            total_calories = 200 + (total_calories + 600) * (50 / 100)  
+        elif total_calories < -500:
+            total_calories = 250 + (total_calories + 500) * (50 / 100)  
+        elif total_calories <-400:
+            total_calories = 300 + (total_calories + 400) * (50 / 100)  
+        elif total_calories < -300:
+            total_calories = 350 + (total_calories + 300) * (50 / 100) 
+        elif total_calories < -200:
+            total_calories = 400 + (total_calories + 200) * (50 / 100) 
+        elif total_calories < -100:
+            total_calories = 450 + (total_calories + 100) * (50 / 100)  
+        else:
+            total_calories =0
+            
     return total_calories//3
 
 def calculate_calories_for_healthy(weight, age, height):
@@ -109,7 +130,7 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
-    return matched_df
+    print(matched_df)
             
 
 def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,activity_level):
@@ -149,7 +170,7 @@ def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,a
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
-    return matched_df
+    print(matched_df)
                  
 
 def Healthy(age,weight,height,food_timing,disease):
@@ -164,14 +185,15 @@ def Healthy(age,weight,height,food_timing,disease):
     # Step 3:KNN
     knn_model,label_encoder,scaler = train_knn_model_healthy(clustering_df)
 
-    # Step 4: Predict Matching Recipes
+    # Step 4:Predict Matching Recipes
     approx_calories = calculate_calories_for_healthy(weight, age, height)
+    
     matching_recipes_df = predict_matching_recipes_healthy(knn_model, label_encoder, scaler,
                                                    approx_calories, clustering_df)
 
     # Step 5:Match Recipe IDs
     matched_df=match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
-    return matched_df
+    print(matched_df)
 
 
 

@@ -24,12 +24,12 @@ def kmeans_clustering(df, optimal_k=3, food_timing=None):
 
     return matching_df
 
-if __name__ == '__main__':
-    # Load the original dataset
-    df = pd.read_csv('./split_file_1.csv')
+# if __name__ == '__main__':
+#     # Load the original dataset
+#     df = pd.read_csv('./split_file_1.csv')
 
-    # Step 1: Clustering
-    food_timing_cluster = 2  # You can set this to 0, 1, or 2
-    clustering_df = kmeans_clustering(df, optimal_k=3, food_timing=food_timing_cluster)
+#     # Step 1: Clustering
+#     food_timing_cluster = 2  # You can set this to 0, 1, or 2
+#     clustering_df = kmeans_clustering(df, optimal_k=3, food_timing=food_timing_cluster)
 
-    print(clustering_df)
+#     print(clustering_df)

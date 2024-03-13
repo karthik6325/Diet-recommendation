@@ -48,9 +48,9 @@ def weight_loss_endpoint():
     height = float(data['Height'])
     food_timing = int(data['Food_Timing'])
     disease = data['Disease']
-    desired_loss_kg = float(data['Desired_Loss_Kg'])
-    num_days = int(data['Num_Days'])
-    activity_level = int(data['Activity_Level'])
+    desired_loss_kg = float(data['WeightLossField'])
+    num_days = int(data['WeightLossGoal'])
+    activity_level = int(data['Activity_level'])
     
     # Call the Weight_Loss function with the extracted data
     suggested_food_items_df = Weight_Loss(age, weight, height, food_timing, disease, desired_loss_kg, num_days, activity_level)
@@ -64,16 +64,16 @@ def weight_loss_endpoint():
 
 def weight_gain_endpoint():
     data = request.json
-
+    print(data)
     # Extracting data from the JSON request
     age = int(data['Age'])
     weight = float(data['Weight'])
     height = float(data['Height'])
     food_timing = int(data['Food_Timing'])
     disease = data['Disease']
-    desired_gain_kg = float(data['Desired_Gain_Kg'])
-    num_days = int(data['Num_Days'])
-    activity_level = int(data['Activity_Level'])
+    desired_gain_kg = float(data['WeightGainField'])
+    num_days = int(data['WeightGainGoal'])
+    activity_level = int(data['Activity_level'])
 
     # Call the Weight_Gain function with the extracted data
     suggested_food_items_df = Weight_Gain(age, weight, height, food_timing, disease, desired_gain_kg, num_days, activity_level)
@@ -94,7 +94,7 @@ def healthy_endpoint():
     height = float(data['Height'])
     food_timing = int(data['Food_Timing'])
     disease = data['Disease']
-    activity_level = int(data['Activity_Level'])
+    activity_level = int(data['Activity_level'])
 
     # Call the Healthy function with the extracted data
     suggested_food_items_df = Healthy(age, weight, height, food_timing, disease,activity_level)

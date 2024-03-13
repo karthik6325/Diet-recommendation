@@ -61,13 +61,13 @@ def recipe_prediction_function(input_df, approx_calories):
 # Example usage:
 # Replace 'your_dataset.csv' with the actual path to your CSV file
 # Load your DataFrame
-df = pd.read_csv('./split_file_1.csv')
+# df = pd.read_csv('./split_file_1.csv')
 
-# Set input values for prediction
-approx_calories_value = 500
+# # Set input values for prediction
+# approx_calories_value = 500
 
-# Call the function
-result = recipe_prediction_function(input_df=df, approx_calories=approx_calories_value)
+# # Call the function
+# result = recipe_prediction_function(input_df=df, approx_calories=approx_calories_value)
 
-# Print the result
-print(result)
+# # Print the result
+# print(result)

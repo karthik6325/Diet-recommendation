@@ -40,7 +40,7 @@ ingredients_to_avoid_mapping = {
     'malnutrition': ['Processed and refined foods', 'Sugary beverages', 'Highly processed snacks', 'Excessive caffeine', 'Alcohol'],
 }
 
-nlp = spacy.load('en_core_web_lg')
+nlp = spacy.load('en_core_web_sm')
 
 def calculate_similarity_and_filter(row, disease):
     recipe_id = row['RecipeId']
@@ -125,8 +125,8 @@ def recommend_recipes_for_disease(df, disease):
     # Return only the top 100 results
     return result_df_sorted.head(100)
 
-if __name__ == '__main__':
-    # Example usage for hypertension
-    df = pd.read_csv('./split_file_1.csv')
-    result_df = recommend_recipes_for_disease(df, 'hypertension')
-    print(result_df)
+# if __name__ == '__main__':
+#     # Example usage for hypertension
+#     df = pd.read_csv('./split_file_1.csv')
+#     result_df = recommend_recipes_for_disease(df, 'hypertension')
+#     print(result_df)

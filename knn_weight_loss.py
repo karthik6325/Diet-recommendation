@@ -59,12 +59,12 @@ def recipe_prediction_function(df, approx_calories, approx_protein, approx_carbo
 
     return result_df
 
-if __name__ == '__main__':
-    # Example usage with a given DataFrame df
-    df = pd.read_csv('./split_file_1.csv')
-    approx_calories = 500
-    approx_protein = 20
-    approx_carbohydrate = 30
-    approx_fat = 15
-    result_df = recipe_prediction_function(df, approx_calories, approx_protein, approx_carbohydrate, approx_fat)
-    print(result_df)
+# if __name__ == '__main__':
+#     # Example usage with a given DataFrame df
+#     df = pd.read_csv('./split_file_1.csv')
+#     approx_calories = 500
+#     approx_protein = 20
+#     approx_carbohydrate = 30
+#     approx_fat = 15
+#     result_df = recipe_prediction_function(df, approx_calories, approx_protein, approx_carbohydrate, approx_fat)
+#     print(result_df)

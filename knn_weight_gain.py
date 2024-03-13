@@ -58,18 +58,18 @@ def recipe_prediction_function(input_df, approx_calories, approx_protein):
 
     return result_df
 
-if __name__ == '__main__':
-    # Example usage:
-    # Replace 'your_dataset.csv' with the actual path to your CSV file
-    # Load your DataFrame
-    df = pd.read_csv('./split_file_1.csv')
+# if __name__ == '__main__':
+#     # Example usage:
+#     # Replace 'your_dataset.csv' with the actual path to your CSV file
+#     # Load your DataFrame
+#     df = pd.read_csv('./split_file_1.csv')
 
-    # Set input values for prediction
-    approx_calories_value = 500
-    approx_protein_value = 20
+#     # Set input values for prediction
+#     approx_calories_value = 500
+#     approx_protein_value = 20
 
-    # Call the function
-    result = recipe_prediction_function(input_df=df, approx_calories=approx_calories_value, approx_protein=approx_protein_value)
+#     # Call the function
+#     result = recipe_prediction_function(input_df=df, approx_calories=approx_calories_value, approx_protein=approx_protein_value)
 
-    # Print the result
-    print(result)
+#     # Print the result
+#     print(result)

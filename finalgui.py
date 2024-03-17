@@ -181,7 +181,7 @@ def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,a
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
-    return disease_recommendation_df
+    return matched_df
                  
 
 def Healthy(age,weight,height,food_timing,disease,activity_level):

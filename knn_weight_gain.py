@@ -88,8 +88,10 @@ def recipe_prediction_function_weight_gain(input_df, approx_calories, approx_pro
     input_df_scaled = scaler.fit_transform(input_df[['Calories', 'ProteinContent']])
     approx_features_scaled = scaler.transform([[approx_calories, approx_protein]])
 
+    n_neighbors = min(len(input_df), 200)
+
     # Perform KNN clustering
-    knn_model = NearestNeighbors(n_neighbors=200)
+    knn_model = NearestNeighbors(n_neighbors=n_neighbors)
     knn_model.fit(input_df_scaled)
 
     # Find nearest neighbors

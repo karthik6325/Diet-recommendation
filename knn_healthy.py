@@ -87,8 +87,11 @@ def recipe_prediction_function_healthy(input_df, approx_calories):
     input_df_scaled = scaler.fit_transform(input_df[['Calories']])
     approx_features_scaled = scaler.transform([[approx_calories]])
 
+    # Determine the number of neighbors
+    n_neighbors = min(len(input_df), 200)
+
     # Perform KNN clustering
-    knn_model = NearestNeighbors(n_neighbors=100)
+    knn_model = NearestNeighbors(n_neighbors=n_neighbors)
     knn_model.fit(input_df_scaled)
 
     # Find nearest neighbors
@@ -101,6 +104,7 @@ def recipe_prediction_function_healthy(input_df, approx_calories):
     result_df = input_df.iloc[neighbor_indices]
 
     return result_df
+
 
 # if __name__ == '__main__':
 #     # Example usage:

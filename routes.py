@@ -51,6 +51,7 @@ def weight_loss_endpoint():
         age = int(data['Age'])
         weight = float(data['Weight'])
         height = float(data['Height'])
+        gender = int(data['Gender'])
         food_timing = int(data['Food_Timing'])
         disease = data['Disease']
         desired_loss_kg = float(data['WeightLossField'])
@@ -58,7 +59,7 @@ def weight_loss_endpoint():
         activity_level = int(data['Activity_level'])
         
         # Call the Weight_Loss function with the extracted data
-        suggested_food_items_df = Weight_Loss(age, weight, height, food_timing, disease, desired_loss_kg, num_days, activity_level)
+        suggested_food_items_df = Weight_Loss(age, weight, height, food_timing, disease, desired_loss_kg, num_days, activity_level, gender)
         
         # Convert DataFrame to dictionary
         suggested_food_items_dict = suggested_food_items_df.to_dict(orient='records')
@@ -80,6 +81,7 @@ def weight_gain_endpoint():
         age = int(data['Age'])
         weight = float(data['Weight'])
         height = float(data['Height'])
+        gender = int(data['Gender'])
         food_timing = int(data['Food_Timing'])
         disease = data['Disease']
         desired_gain_kg = float(data['WeightGainField'])
@@ -87,7 +89,7 @@ def weight_gain_endpoint():
         activity_level = int(data['Activity_level'])
 
         # Call the Weight_Gain function with the extracted data
-        suggested_food_items_df = Weight_Gain(age, weight, height, food_timing, disease, desired_gain_kg, num_days, activity_level)
+        suggested_food_items_df = Weight_Gain(age, weight, height, food_timing, disease, desired_gain_kg, num_days, activity_level, gender)
         
         # Convert DataFrame to dictionary
         suggested_food_items_dict = suggested_food_items_df.to_dict(orient='records')
@@ -109,12 +111,13 @@ def healthy_endpoint():
         age = int(data['Age'])
         weight = float(data['Weight'])
         height = float(data['Height'])
+        gender = int(data['Gender'])
         food_timing = int(data['Food_Timing'])
         disease = data['Disease']
         activity_level = int(data['Activity_level'])
 
         # Call the Healthy function with the extracted data
-        suggested_food_items_df = Healthy(age, weight, height, food_timing, disease,activity_level)
+        suggested_food_items_df = Healthy(age, weight, height, food_timing, disease,activity_level, gender)
         
         # Convert DataFrame to dictionary
         suggested_food_items_dict = suggested_food_items_df.to_dict(orient='records')

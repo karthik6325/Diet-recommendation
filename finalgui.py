@@ -7,53 +7,54 @@ from knn_weight_gain import recipe_prediction_function_weight_gain
 from knn_healthy import recipe_prediction_function_healthy
 from disease_recommendation import recommend_recipes_for_disease
 
-def calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num_days, activity_factor):
-    # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
-    bmr = 10*weight+6.25*height-5*age+5
-
+def calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num_days, activity_factor, gender):
+    
+    if gender == 1:  # Assuming 1 for male, 0 for female
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    else:
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161
+      
+    # Calculate Total Daily Energy Expenditure (TDEE)
     tdee = bmr * activity_factor
     
-    # Calculate total calories needed for weight gain
-    total_calories = tdee + (desired_gain_kg * 7700) / num_days
+    # Calculate total additional calories needed for desired weight gain
+    additional_calories = (desired_gain_kg * 7700) / num_days
     
-    return total_calories//3
+    # Calculate total daily calories needed for weight gain
+    total_calories = tdee + additional_calories
+    
+    return total_calories
 
 
-def calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num_days, activity_factor):
+def calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num_days, activity_factor, gender):
     # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
-    bmr =10*weight+6.25*height-5*age+5
-    
-    tdee =bmr*activity_factor
+    if gender == 1:  # Assuming 1 for male, 0 for female
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    else:
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161
+        
+    # Calculate Total Daily Energy Expenditure (TDEE)
+    tdee = bmr * activity_factor
     
     # Calculate total calories needed for weight loss
-    total_calories =tdee-(desired_loss_kg * 7700)/num_days
-    if total_calories < 0:
-        if total_calories < -900:
-            total_calories = 50 + (total_calories + 900) * (50 / 100)  
-        elif total_calories < -800:
-            total_calories = 100 + (total_calories + 800) * (50 / 100)  
-        elif total_calories < -700:
-            total_calories = 150 + (total_calories + 700) * (50 / 100)
-        elif total_calories < -600:
-            total_calories = 200 + (total_calories + 600) * (50 / 100)  
-        elif total_calories < -500:
-            total_calories = 250 + (total_calories + 500) * (50 / 100)  
-        elif total_calories <-400:
-            total_calories = 300 + (total_calories + 400) * (50 / 100)  
-        elif total_calories < -300:
-            total_calories = 350 + (total_calories + 300) * (50 / 100) 
-        elif total_calories < -200:
-            total_calories = 400 + (total_calories + 200) * (50 / 100) 
-        elif total_calories < -100:
-            total_calories = 450 + (total_calories + 100) * (50 / 100)  
-        else:
-            total_calories =0
+    total_calories = tdee - (desired_loss_kg * 7700) / num_days
+    
+    if total_calories >= 0:
+        return total_calories
+    
+    # Adjust total calories if it's negative
+    total_calories = max(100, 500 + (total_calories * 0.5))
             
-    return total_calories//3
+    return total_calories
 
-def calculate_calories_for_healthy(weight, age, height, activity_level):
-    # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
-    bmr = 10 * weight + 6.25 * height - 5 *age+5
+def calculate_calories_for_healthy(weight, age, height, activity_level,gender):
+    
+     # Calculate Basal Metabolic Rate (BMR) using Mifflin-St Jeor Equation
+    if gender == 1:  # Assuming 1 for male, 0 for female
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    else:
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161
+        
 
     if activity_level == 1:
         activity_factor = 1.2
@@ -136,8 +137,15 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
 
     # Step 4: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
-
-    return matched_df
+    
+     # Calculate the acceptable range for approx_calories
+    lower_bound = approx_calories * 0.85
+    upper_bound = approx_calories * 0.15
+    
+    # Filter matched_df to only contain values within 15% of the range of approx_calories
+    filtered_matched_df = matched_df[(matched_df['calories'] >= lower_bound) & (matched_df['calories'] <= upper_bound)]
+    
+    return filtered_matched_df
             
 
 def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,activity_level):
@@ -175,7 +183,14 @@ def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,a
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
-    return matched_df
+     # Calculate the acceptable range for approx_calories
+    lower_bound = approx_calories * 0.85
+    upper_bound = approx_calories * 0.15
+    
+    # Filter matched_df to only contain values within 15% of the range of approx_calories
+    filtered_matched_df = matched_df[(matched_df['calories'] >= lower_bound) & (matched_df['calories'] <= upper_bound)]
+    
+    return filtered_matched_df
                  
 
 def Healthy(age,weight,height,food_timing,disease,activity_level):
@@ -194,7 +209,15 @@ def Healthy(age,weight,height,food_timing,disease,activity_level):
 
     # Step 4:Match Recipe IDs
     matched_df=match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
-    return matched_df
+    
+     # Calculate the acceptable range for approx_calories
+    lower_bound = approx_calories * 0.85
+    upper_bound = approx_calories * 0.15
+    
+    # Filter matched_df to only contain values within 15% of the range of approx_calories
+    filtered_matched_df = matched_df[(matched_df['calories'] >= lower_bound) & (matched_df['calories'] <= upper_bound)]
+    
+    return filtered_matched_df
 
 
 

@@ -7,8 +7,6 @@ import threading  # Import threading module
 lock = threading.Lock()
 
 import requests
-from PIL import Image
-from io import BytesIO
 
 import requests
 

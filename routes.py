@@ -25,7 +25,7 @@ def fetch_image_url(query, api_key, cx):
     if 'items' in data and data['items']:
         return data['items'][0]['link']
     else:
-        # print(f"No image found for query: {query}")
+        print(f"No image found for query: {query}")
         return "https://i0.wp.com/wonkywonderful.com/wp-content/uploads/2020/08/spinach-tomato-pasta-sauce-recipe-4.jpg?ssl=1"
 
 

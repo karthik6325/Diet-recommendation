@@ -100,32 +100,32 @@ def recipe_prediction_function_weight_loss(input_df, approx_calories, approx_pro
 
     return result_df
 
-# if __name__ == '__main__':
-#     # Example usage:
-#     # Replace 'your_dataset.csv' with the actual path to your CSV file
-#     # Load your DataFrame
-#     df = pd.read_csv('./split_file_1.csv')
+if __name__ == '__main__':
+    # Example usage:
+    # Replace 'your_dataset.csv' with the actual path to your CSV file
+    # Load your DataFrame
+    df = pd.read_csv('./split_file_1.csv')
 
-#     # Set input values for prediction
-#     approx_calories_value = 500
-#     approx_protein_value = 20
-#     approx_carbohydrate_value = 30
-#     approx_fat_value = 15
+    # Set input values for prediction
+    approx_calories_value = 500
+    approx_protein_value = 20
+    approx_carbohydrate_value = 30
+    approx_fat_value = 15
 
-#     # Call the function
-#     result = recipe_prediction_function(input_df=df, 
-#                                         approx_calories=approx_calories_value, 
-#                                         approx_protein=approx_protein_value, 
-#                                         approx_carbohydrate=approx_carbohydrate_value, 
-#                                         approx_fat=approx_fat_value)
+    # Call the function
+    result = recipe_prediction_function(input_df=df, 
+                                        approx_calories=approx_calories_value, 
+                                        approx_protein=approx_protein_value, 
+                                        approx_carbohydrate=approx_carbohydrate_value, 
+                                        approx_fat=approx_fat_value)
 
-#     # Visualize the results
-#     plt.figure(figsize=(10, 6))
-#     sns.scatterplot(x='Calories', y='ProteinContent', data=df, label='All Recipes')
-#     sns.scatterplot(x='Calories', y='ProteinContent', data=result, color='red', label='Predicted Recipes')
-#     plt.scatter(approx_calories_value, approx_protein_value, color='green', label='Approximate Values', marker='X', s=100)
-#     plt.title('Predicted Recipes and Approximate Values')
-#     plt.xlabel('Calories')
-#     plt.ylabel('Protein Content, Carbohydrate Content and Fat Content')
-#     plt.legend()
-#     plt.show()
+    # Visualize the results
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(x='Calories', y='ProteinContent', data=df, label='All Recipes')
+    sns.scatterplot(x='Calories', y='ProteinContent', data=result, color='red', label='Predicted Recipes')
+    plt.scatter(approx_calories_value, approx_protein_value, color='green', label='Approximate Values', marker='X', s=100)
+    plt.title('Predicted Recipes and Approximate Values')
+    plt.xlabel('Calories')
+    plt.ylabel('Protein Content, Carbohydrate Content and Fat Content')
+    plt.legend()
+    plt.show()

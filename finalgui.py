@@ -101,7 +101,7 @@ def match_recipe_ids(disease_df, matching_df, original_df):
 
     return matched_df
 
-def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,activity_level):
+def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,activity_level,gender):
     # Load the original dataset
     df = pd.read_csv('./split_file_1.csv')
 
@@ -125,7 +125,7 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
     clustering_df = kmeans_clustering(df,3,food_timing)
 
     # Step 3: KNN
-    cal_intake=calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num_days, activity_factor)
+    cal_intake=calculate_calories_for_weight_loss(weight, age, height, desired_loss_kg, num_days, activity_factor,gender)
     cal_protein=(cal_intake)//4
     cal_carb=(cal_intake)//4
     cal_fat=(cal_intake)//9
@@ -139,22 +139,25 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
     
      # Calculate the acceptable range for approx_calories
-    lower_bound = approx_calories * 0.85
-    upper_bound = approx_calories * 0.15
+    lower_bound = approx_calories * 0.5
+    upper_bound = approx_calories * 1.5
     
     # Filter matched_df to only contain values within 15% of the range of approx_calories
-    filtered_matched_df = matched_df[(matched_df['calories'] >= lower_bound) & (matched_df['calories'] <= upper_bound)]
+    filtered_matched_df = matched_df[(matched_df['Calories'] >= lower_bound) & (matched_df['Calories'] <= upper_bound)]
+
+    sorted_filtered_matched_df = filtered_matched_df.sort_values(by='Calories', ascending=True)
     
-    return filtered_matched_df
+    return sorted_filtered_matched_df
             
 
-def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,activity_level):
+def Weight_Gain(age, weight, height, food_timing, disease, desired_gain_kg, num_days, activity_level, gender):
     # Load the original dataset
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1: Disease Recommendation
     disease_recommendation_df = recommend_recipes_for_disease(df, disease)
-     # Calculate Total Daily Energy Expenditure (TDEE) based on activity level
+
+    # Calculate Total Daily Energy Expenditure (TDEE) based on activity level
     if activity_level == 1:
         activity_factor = 1.2
     elif activity_level == 2:
@@ -166,34 +169,38 @@ def Weight_Gain(age,weight,height,food_timing,disease,desired_gain_kg,num_days,a
     elif activity_level == 5:
         activity_factor = 1.9
     else:
-     raise ValueError("Invalid activity level. Choose from:1-> sedentary, 2->lightly active,3-> moderately active,4-> very active,5-> extremely active")
+        raise ValueError("Invalid activity level. Choose from: 1 -> sedentary, 2 -> lightly active, 3 -> moderately active, 4 -> very active, 5 -> extremely active")
 
     # Step 2: Clustering
-    clustering_df = kmeans_clustering(df,3,food_timing)
+    clustering_df = kmeans_clustering(df, 3, food_timing)
 
     # Step 3: KNN
-    cal_intake=calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num_days, activity_factor)
-    #convert calorie to protein
-    cal_protein=(cal_intake)//4
+    cal_intake = calculate_calories_for_weight_gain(weight, age, height, desired_gain_kg, num_days, activity_factor, gender)
+    # Convert calorie to protein
+    cal_protein = cal_intake // 4
+
     # Step 4: Predict Matching Recipes
-    approx_calories = cal_intake-cal_protein
+    approx_calories = cal_intake - cal_protein
     approx_protein = cal_protein
     matching_recipes_df = recipe_prediction_function_weight_gain(clustering_df, approx_calories, approx_protein)
 
     # Step 5: Match Recipe IDs
     matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
-     # Calculate the acceptable range for approx_calories
-    lower_bound = approx_calories * 0.85
-    upper_bound = approx_calories * 0.15
+    # Calculate the acceptable range for approx_calories
+    lower_bound = approx_calories * 0.5
+    upper_bound = approx_calories * 1.5
     
-    # Filter matched_df to only contain values within 15% of the range of approx_calories
-    filtered_matched_df = matched_df[(matched_df['calories'] >= lower_bound) & (matched_df['calories'] <= upper_bound)]
-    
-    return filtered_matched_df
+    # Filter matched_df to only contain values within the range of approx_calories
+    filtered_matched_df = matched_df[(matched_df['Calories'] >= lower_bound) & (matched_df['Calories'] <= upper_bound)]
+
+    # Sort by Calories in descending order
+    sorted_filtered_matched_df = filtered_matched_df.sort_values(by='Calories', ascending=False)
+
+    return sorted_filtered_matched_df
                  
 
-def Healthy(age,weight,height,food_timing,disease,activity_level):
+def Healthy(age,weight,height,food_timing,disease,activity_level,gender):
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1:Disease Recommendation
@@ -203,21 +210,14 @@ def Healthy(age,weight,height,food_timing,disease,activity_level):
     clustering_df=kmeans_clustering(df,3,food_timing)
 
     # Step 3:KNN
-    approx_calories = calculate_calories_for_healthy(weight, age, height,activity_level)
+    approx_calories = calculate_calories_for_healthy(weight, age, height,activity_level,gender)
     
     matching_recipes_df = recipe_prediction_function_healthy(clustering_df, approx_calories)
 
     # Step 4:Match Recipe IDs
     matched_df=match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
     
-     # Calculate the acceptable range for approx_calories
-    lower_bound = approx_calories * 0.85
-    upper_bound = approx_calories * 0.15
-    
-    # Filter matched_df to only contain values within 15% of the range of approx_calories
-    filtered_matched_df = matched_df[(matched_df['calories'] >= lower_bound) & (matched_df['calories'] <= upper_bound)]
-    
-    return filtered_matched_df
+    return matched_df
 
 
 

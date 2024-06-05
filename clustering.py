@@ -29,11 +29,11 @@ def kmeans_clustering(df, optimal_k=3, food_timing=None):
 #     print(clustering_df)
 
 
-# import matplotlib.pyplot as plt
-# import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 # import numpy as np
 # import pandas as pd
-# from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.metrics import silhouette_samples, silhouette_score
 # from sklearn.cluster import KMeans
 
 def plot_silhouette_analysis(df, optimal_k):

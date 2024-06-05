@@ -11,21 +11,21 @@ import requests
 import requests
 
 def fetch_image_url(query, api_key, cx):
-    search_url = "https://www.googleapis.com/customsearch/v1"
-    params = {
-        'q': f"{query} dish",
-        'key': api_key,
-        'cx': cx,
-        'searchType': 'image',
-    }
+    # search_url = "https://www.googleapis.com/customsearch/v1"
+    # params = {
+    #     'q': f"{query} dish",
+    #     'key': api_key,
+    #     'cx': cx,
+    #     'searchType': 'image',
+    # }
 
-    response = requests.get(search_url, params=params)
-    data = response.json()
+    # response = requests.get(search_url, params=params)
+    # data = response.json()
 
-    if 'items' in data and data['items']:
-        return data['items'][0]['link']
-    else:
-        print(f"No image found for query: {query}")
+    # if 'items' in data and data['items']:
+    #     return data['items'][0]['link']
+    # else:
+    #     print(f"No image found for query: {query}")
         return "https://i0.wp.com/wonkywonderful.com/wp-content/uploads/2020/08/spinach-tomato-pasta-sauce-recipe-4.jpg?ssl=1"
 
 

@@ -106,7 +106,11 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1: Disease Recommendation
-    disease_recommendation_df = recommend_recipes_for_disease(df, disease)
+    if disease == 'None':
+        df['Similarity'] = 1
+        disease_recommendation_df = df
+    else:
+        disease_recommendation_df = recommend_recipes_for_disease(df, disease)
       # Calculate Total Daily Energy Expenditure (TDEE) based on activity level
     if activity_level == 1:
         activity_factor = 1.2
@@ -136,7 +140,10 @@ def Weight_Loss(age,weight,height,food_timing,disease,desired_loss_kg,num_days,a
     matching_recipes_df = recipe_prediction_function_weight_loss(clustering_df, approx_calories, approx_protein, approx_carbohydrate, approx_fat)
 
     # Step 4: Match Recipe IDs
-    matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
+    if disease == 'None':
+        matched_df = matching_recipes_df
+    else:
+        matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
     
      # Calculate the acceptable range for approx_calories
     lower_bound = approx_calories * 0.5
@@ -155,7 +162,11 @@ def Weight_Gain(age, weight, height, food_timing, disease, desired_gain_kg, num_
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1: Disease Recommendation
-    disease_recommendation_df = recommend_recipes_for_disease(df, disease)
+    if disease == 'None':
+        df['Similarity'] = 1
+        disease_recommendation_df = df
+    else:
+        disease_recommendation_df = recommend_recipes_for_disease(df, disease)
 
     # Calculate Total Daily Energy Expenditure (TDEE) based on activity level
     if activity_level == 1:
@@ -185,7 +196,10 @@ def Weight_Gain(age, weight, height, food_timing, disease, desired_gain_kg, num_
     matching_recipes_df = recipe_prediction_function_weight_gain(clustering_df, approx_calories, approx_protein)
 
     # Step 5: Match Recipe IDs
-    matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
+    if disease == 'None':
+        matched_df = matching_recipes_df
+    else:
+        matched_df = match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
 
     # Calculate the acceptable range for approx_calories
     lower_bound = approx_calories * 0.5
@@ -204,7 +218,11 @@ def Healthy(age,weight,height,food_timing,disease,activity_level,gender):
     df = pd.read_csv('./split_file_1.csv')
 
     # Step 1:Disease Recommendation
-    disease_recommendation_df=recommend_recipes_for_disease(df, disease)
+    if disease == 'None':
+        df['Similarity'] = 1
+        disease_recommendation_df = df
+    else:
+        disease_recommendation_df = recommend_recipes_for_disease(df, disease)
 
     # Step 2:Clustering
     clustering_df=kmeans_clustering(df,3,food_timing)
@@ -215,7 +233,10 @@ def Healthy(age,weight,height,food_timing,disease,activity_level,gender):
     matching_recipes_df = recipe_prediction_function_healthy(clustering_df, approx_calories)
 
     # Step 4:Match Recipe IDs
-    matched_df=match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
+    if disease == 'None':
+        matched_df = matching_recipes_df
+    else:
+        matched_df=match_recipe_ids(disease_recommendation_df, matching_recipes_df, df)
     
     return matched_df
 
